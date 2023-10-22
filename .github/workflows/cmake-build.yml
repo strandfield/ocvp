@@ -1,0 +1,33 @@
+name: CMake Build
+
+on:
+  push:
+    branches: 
+      - master
+      - develop
+    tags:
+      - v*
+  pull_request:
+    branches: ["master", "develop"]
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install OpenCV
+      run: sudo apt install -y libopencv-dev
+      
+    - name: Install Qt5
+      run: sudo apt install qtbase5-dev
+      
+    - name: Configure CMake
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DBUILD_QT_GUI=ON
+
+    - name: Build
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
